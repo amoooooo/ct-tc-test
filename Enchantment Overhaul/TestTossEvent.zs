@@ -43,7 +43,7 @@ CTEventManager.register<MCItemTossEvent>((event) => {
         //player.sendMessage(data.asFormattedText("", 0));
         entityItem.updateData({Motion:[0.0,-0.5,0.0]});
         entityItem.setNoGravity(true);
-        EnchantData.testItems.add(new EnchantData(player, entityItem, 0, new MCVector3d(85.5, 6.5, 15.5)));
+        EnchantData.testItems.add(new EnchantData(entityItem, 0, new MCVector3d(85.5, 6.5, 15.5)));
         
     }
 });

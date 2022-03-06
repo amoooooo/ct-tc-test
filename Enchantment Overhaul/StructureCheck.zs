@@ -10,6 +10,7 @@ import crafttweaker.api.data.ListData;
 import crafttweaker.api.data.ICollectionData;
 import crafttweaker.api.server.MCServer;
 import crafttweaker.api.BracketHandlers;
+import crafttweaker.api.util.MCVector3d;
 import stdlib.List;
 
 
@@ -75,7 +76,6 @@ public class structureCheck {
                     var itemsData = world.getTileData(block) as MapData;
                     var itemArr = pedestal.getAt("Items") as ICollectionData;
                     var item = (itemArr.getAt(0) as MapData).getAt("id").getString() as string;
-                    println("item: "+item);
                     items.add(<item:${item}> as IItemStack); 
                 }
             } else if world.getBlockState(block).block == <block:supplementaries:pedestal> && block == center && world.getBlockState(block).hasTileEntity(){
@@ -84,7 +84,6 @@ public class structureCheck {
                     var centerData = world.getTileData(center) as MapData;
                     var centerArr = centerPedestal.getAt("Items") as ICollectionData;
                     var centerItem = (centerArr.getAt(0) as MapData).getAt("id").getString() as string;
-                    println("center: "+centerItem);
                     catalyst = BracketHandlers.getItem(centerItem);
                 }
                 
@@ -99,7 +98,7 @@ public class structureCheck {
     public static spawnItemsInArea(origin as BlockPos, world as MCWorld) as void{
         var center = origin.down(2);
         var blocksInArea = center.getAllInBox(center.north(4).east(4), center.south(4).west(4));
-        var items = new List<IItemStack>();
+        //var items = new List<IItemStack>();
         var catalyst = <item:minecraft:air>;
         for block in blocksInArea {
             //println(block);
@@ -109,11 +108,20 @@ public class structureCheck {
                     var itemsData = world.getTileData(block) as MapData;
                     var itemArr = pedestal.getAt("Items") as ICollectionData;
                     var item = (itemArr.getAt(0) as MapData).getAt("id").getString() as string;
-                    //world.setBlockState(block, <blockstate:minecraft:air>);
+                    world.setBlockState(block, <blockstate:minecraft:air>);
                     world.setBlockState(block, <blockstate:supplementaries:pedestal:waterlogged=false,has_item=false,up=false,axis=x,down=false>);
-                    println("item: "+item);
-                    items.add(<item:${item}> as IItemStack); 
-                    world.addEntity(new MCItemEntity(world, block.x, block.y + 0.5, block.z, <item:${item}>));
+                    var nearEntities = world.getEntitiesInArea(block.north(1).east(1).up(1), block.south(1).west(1)) as MCEntity[];
+                    nearEntities.filter((entity as MCEntity) => entity is MCItemEntity)
+                                .each(entity => {
+                                    entity.moveForced(block.x, block.y+1.5, block.z);
+                                    entity.setNoGravity(true);
+                                    var originParticles = new MCVector3d(origin.x + 0.5, origin.y + 1.0, origin.z + 0.5);
+                                    EnchantData.testItems.add(new EnchantData(entity, 0, originParticles));
+                                    println("item: "+item);
+                                });
+                    
+                    //items.add(<item:${item}> as IItemStack); 
+                    //world.addEntity(new MCItemEntity(world, block.x, block.y + 0.5, block.z, <item:${item}>));
                 }
             }
         }
