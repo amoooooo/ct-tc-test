@@ -19,9 +19,11 @@ CTEventManager.register<MCRightClickBlockEvent>((event) => {
     if event.getItemStack().matches(<item:supplementaries:wrench>){
         if world.getBlockState(event.getBlockPos()).block == <block:contenttweaker:matrix> {
             var currentRecipe = structureCheck.getItemsInPedestals(originPos, world);
-            if currentRecipe in InfusionRecipes.infRecipes {
-                println("TRUE");
-                structureCheck.spawnItemsInArea(originPos, world);
+            for catalyst, infusion in InfusionRecipes.infRecipes {
+                if currentRecipe == infusion {
+                    println("TRUE");    
+                    structureCheck.spawnItemsInArea(originPos, world);
+                }
             }
         }
         

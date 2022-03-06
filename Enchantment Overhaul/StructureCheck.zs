@@ -11,6 +11,7 @@ import crafttweaker.api.data.ICollectionData;
 import crafttweaker.api.server.MCServer;
 import crafttweaker.api.BracketHandlers;
 import crafttweaker.api.util.MCVector3d;
+import crafttweaker.api.blocks.MCBlockState;
 import stdlib.List;
 
 
@@ -63,10 +64,11 @@ public class structureCheck {
         }
     }
 
-    public static getItemsInPedestals(origin as BlockPos, world as MCWorld) as List<IItemStack>[IItemStack]{
+    public static getItemsInPedestals(origin as BlockPos, world as MCWorld) as InfusionRecipeObject{
         var center = origin.down(2);
         var blocksInArea = center.getAllInBox(center.north(4).east(4), center.south(4).west(4));
         var items = new List<IItemStack>();
+        var jars = new List<MCBlockState>();
         var catalyst = <item:minecraft:air>;
         for block in blocksInArea {
             //println(block);
@@ -87,11 +89,15 @@ public class structureCheck {
                     catalyst = BracketHandlers.getItem(centerItem);
                 }
                 
-            }
+            } else if (world.getBlockState(block).block == <block:supplementaries:jar> || world.getBlockState(block).block == <block:supplementaries:jar_tinted>) && world.getBlockState(block).hasTileEntity(){
+                if !(((world.getTileEntity(block).data.getAt("FluidHolder") as ICollectionData).getAt(0) as MapData).getAt("Fluid") as string == "minecraft:empty"){
+                    jars.add(world.getBlockState(block));
+                }
+            } 
         }
         println("catalyst: "+catalyst.displayName);
-        var recipe as List<IItemStack>[IItemStack] = {};
-        recipe[catalyst] = items;
+        var jarArray = jars as MCBlockState[];
+        var recipe = new InfusionRecipeObject(items as IItemStack[], catalyst, jarArray as MCBlockState[]);
         return recipe;
     }
 
@@ -113,7 +119,7 @@ public class structureCheck {
                     var nearEntities = world.getEntitiesInArea(block.north(1).east(1).up(1), block.south(1).west(1)) as MCEntity[];
                     nearEntities.filter((entity as MCEntity) => entity is MCItemEntity)
                                 .each(entity => {
-                                    entity.moveForced(block.x, block.y+1.5, block.z);
+                                    entity.setPositionAndUpdate(block.x, block.y+3, block.z);
                                     entity.setNoGravity(true);
                                     var originParticles = new MCVector3d(origin.x + 0.5, origin.y + 1.0, origin.z + 0.5);
                                     EnchantData.testItems.add(new EnchantData(entity, 0, originParticles));

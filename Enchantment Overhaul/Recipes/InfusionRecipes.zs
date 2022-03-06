@@ -8,14 +8,10 @@ import crafttweaker.api.item.IItemStack;
 
 
 public class InfusionRecipes {
-    public static var netherstarInfuse = new List<IItemStack>();
-    public static var NetherStarRecipe = {<item:minecraft:sunflower> : netherstarInfuse } as List<IItemStack>[IItemStack];
-    public static var infRecipes = new List<List<IItemStack>[IItemStack]>;
 
+    public static var infRecipes = { 
+        <item:minecraft:nether_star> : new InfusionRecipeObject([<item:minecraft:ender_pearl>, <item:minecraft:wither_skeleton_skull>] as IItemStack[], <item:minecraft:sunflower> as IItemStack, [])
+        } as InfusionRecipeObject[IItemStack];
 
     
 }
-
-InfusionRecipes.netherstarInfuse.add(<item:minecraft:ender_pearl>);
-InfusionRecipes.netherstarInfuse.add(<item:minecraft:wither_skeleton_skull>);
-InfusionRecipes.infRecipes.add(InfusionRecipes.NetherStarRecipe);
