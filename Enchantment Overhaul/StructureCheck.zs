@@ -12,6 +12,8 @@ import crafttweaker.api.server.MCServer;
 import crafttweaker.api.BracketHandlers;
 import crafttweaker.api.util.MCVector3d;
 import crafttweaker.api.blocks.MCBlockState;
+import crafttweaker.api.capability.Capabilities;
+import crafttweaker.api.capability.IItemHandler;
 import stdlib.List;
 
 
@@ -109,41 +111,18 @@ public class structureCheck {
         for block in blocksInArea {
             //println(block);
             if world.getBlockState(block).block == <block:supplementaries:pedestal> && !(block == center) && world.getBlockState(block).hasTileEntity(){
-                if !(world.getTileEntity(block).data as MapData).isEmpty {
-                    var pedestal = world.getTileEntity(block).data as MapData;
-                    var itemsData = world.getTileData(block) as MapData;
-                    var itemArr = pedestal.getAt("Items") as ICollectionData;
-                    var item = (itemArr.getAt(0) as MapData).getAt("id").getString() as string;
-                    world.setBlockState(block, <blockstate:minecraft:air>);
-                    world.setBlockState(block, <blockstate:supplementaries:pedestal:waterlogged=false,has_item=false,up=false,axis=x,down=false>);
-                    var nearEntities = world.getEntitiesInArea(block.north(1).east(1).up(1), block.south(1).west(1)) as MCEntity[];
-                    nearEntities.filter((entity as MCEntity) => entity is MCItemEntity)
-                                .each(entity => {
-                                    entity.setPositionAndUpdate(block.x, block.y+3, block.z);
-                                    entity.setNoGravity(true);
-                                    var originParticles = new MCVector3d(origin.x + 0.5, origin.y + 1.0, origin.z + 0.5);
-                                    EnchantData.testItems.add(new EnchantData(entity, 0, originParticles));
-                                    println("item: "+item);
-                                });
-                    
-                    //items.add(<item:${item}> as IItemStack); 
-                    //world.addEntity(new MCItemEntity(world, block.x, block.y + 0.5, block.z, <item:${item}>));
+                var tile = world.getTileEntity(block);
+                var itemCap = tile.getCapability<IItemHandler>(Capabilities.ITEM);
+                if itemCap != null {
+                    var item = itemCap.extractItem(0, 1, false);
+                    var itemEntity = new MCItemEntity(world, block.x, block.y + 3.5, block.z, item);
+                    itemEntity.setNoGravity(true);
+                    var originParticles = new MCVector3d(origin.x + 0.5, origin.y + 1.0, origin.z + 0.5);
+                    EnchantData.testItems.add(new EnchantData(itemEntity, 0, originParticles));
+                }
                 }
             }
         }
-    }
-    /* testing
-    function validateStructure(blueprint as MCBlockState[][], corepos as BlockPos, world as MCWorld) as bool {
-    //Make sure your structure is padded with air. So it has the same height as width.
-        var structureRadius = blueprint[0].length;
-        for i in 0 .. (structureRadius - 2) {
-            //how to get the appropriate blockstate in the array is the question
-            if (world.getBlockState(corepos.south(i)) == blueprint[2+i][1] && world.getBlockState(corepos.south(i).east(i)) == blueprint[2+i][1+i] && world.getBlockState(corepos.south(i).west(i)) == blueprint[2+i][1-i]) {
-            
-            }
-        
-        }
-    } */
     
 }
 

@@ -20,6 +20,7 @@ CTEventManager.register<MCRightClickBlockEvent>((event) => {
         if world.getBlockState(event.getBlockPos()).block == <block:contenttweaker:matrix> {
             var currentRecipe = structureCheck.getItemsInPedestals(originPos, world);
             for catalyst, infusion in InfusionRecipes.infRecipes {
+                // TODO: need to compare objects
                 if currentRecipe == infusion {
                     println("TRUE");    
                     structureCheck.spawnItemsInArea(originPos, world);

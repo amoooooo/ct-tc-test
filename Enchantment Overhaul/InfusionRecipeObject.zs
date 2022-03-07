@@ -20,15 +20,6 @@ public class InfusionRecipeObject {
     }
 
     public matches(input as InfusionRecipeObject) as bool {
-        var input1 = this.inputs.sorted();
-        var input2 = input.inputs.sorted();
-        var fluids1 = this.fluids.sorted();
-        var fluids2 = input.fluids.sorted();
-        if input1 == input2 && fluids1 == fluids2 && this.catalyst == input.catalyst {
-            return true;
-        } else {
-            return false;
-        }
     }
   
 }
