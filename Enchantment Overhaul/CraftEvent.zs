@@ -21,7 +21,7 @@ CTEventManager.register<MCRightClickBlockEvent>((event) => {
             var currentRecipe = structureCheck.getItemsInPedestals(originPos, world);
             for catalyst, infusion in InfusionRecipes.infRecipes {
                 // TODO: need to compare objects
-                if currentRecipe == infusion {
+                if currentRecipe.matches(infusion) {
                     println("TRUE");    
                     structureCheck.spawnItemsInArea(originPos, world);
                 }

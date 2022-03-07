@@ -80,7 +80,9 @@ public class structureCheck {
                     var itemsData = world.getTileData(block) as MapData;
                     var itemArr = pedestal.getAt("Items") as ICollectionData;
                     var item = (itemArr.getAt(0) as MapData).getAt("id").getString() as string;
-                    items.add(<item:${item}> as IItemStack); 
+                    var finalItem = BracketHandlers.getItem(item);
+                    items.add(finalItem); 
+                    println("item: "+finalItem.displayName);
                 }
             } else if world.getBlockState(block).block == <block:supplementaries:pedestal> && block == center && world.getBlockState(block).hasTileEntity(){
                 if !(world.getTileEntity(center).data as MapData).isEmpty {
@@ -91,11 +93,11 @@ public class structureCheck {
                     catalyst = BracketHandlers.getItem(centerItem);
                 }
                 
-            } else if (world.getBlockState(block).block == <block:supplementaries:jar> || world.getBlockState(block).block == <block:supplementaries:jar_tinted>) && world.getBlockState(block).hasTileEntity(){
+            } /*else if (world.getBlockState(block).block == <block:supplementaries:jar> || world.getBlockState(block).block == <block:supplementaries:jar_tinted>) && world.getBlockState(block).hasTileEntity(){
                 if !(((world.getTileEntity(block).data.getAt("FluidHolder") as ICollectionData).getAt(0) as MapData).getAt("Fluid") as string == "minecraft:empty"){
                     jars.add(world.getBlockState(block));
                 }
-            } 
+            }*/ 
         }
         println("catalyst: "+catalyst.displayName);
         var jarArray = jars as MCBlockState[];
